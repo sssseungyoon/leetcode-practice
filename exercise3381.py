@@ -4,36 +4,34 @@ from typing import List
 class Solution:
     # this will have O(n x k) time complexity
     def maxSubarraySum(self, nums: List[int], k: int) -> int:
-        tracking: dict[int, int] = {}
-        maximum = 0
-        for i in range(k):
-            print("sum:", sum(nums[i:k]))
-            tracking[i] = sum(nums[i:k])
-            maximum += nums[i]
-        nums = nums[k:]
-        print("maximum:", maximum, "nums:", nums, "tracking", tracking)
+        tracking: dict[int, tuple[int, bool]] = {
+            i: (-(10**100), True) for i in range(k)
+        }
+        tracking[0] = (sum(nums[:k]), True)
+        print(tracking)
 
-        skip = set()
-        for i, num in enumerate(nums):
-            # update the nums
-            for start, subtotal in tracking.items():
-                if start in skip:
-                    continue
-                subtotal += num
-                tracking[start] = subtotal
-                print("num:", num, "start:", start, "subtotal:", subtotal)
-                if (i - start + 1) % k == 0:
-                    if subtotal > maximum:
-                        maximum = subtotal
-                    if subtotal <= 0 and i + 1 < len(nums):
-                        print("skip")
-                        # you can't delete an item from the dict ig
-                        skip.add(start)
-                        # i am gues
-                        tracking[i + 1] = nums[i + 1]
-                print(tracking)
+        for i in range(k, len(nums)):
+            index = (i + 1) % k
+            new_chunk = sum(nums[(i + 1 - k) : (i + 1)])
+            existing_chunk = tracking[index][0]
+            print("new:", new_chunk, "existing:", existing_chunk, "i%k:", index)
+            canMerge = tracking[index][1]
+            if canMerge:
+                localMax = max(existing_chunk, new_chunk, existing_chunk + new_chunk)
+            else:
+                localMax = max(existing_chunk, new_chunk)
+            tracking[index] = (localMax, (localMax != existing_chunk))
+            print("i:", i, "tracking:", tracking)
 
-        return maximum
+        output = -(10**100)
+        for val, _ in tracking.values():
+            if val > output:
+                output = val
+        return output
+
+
+# instead of tracking the subtotal of each cases, which complicated the logic, I just use array slicing to calculate the subtotal
+# failed to encompass the case where the local maximum doesn't correspond to the global maximum
 
 
 if __name__ == "__main__":
