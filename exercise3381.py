@@ -2,16 +2,20 @@ from typing import List
 
 
 class Solution:
-    # this will have O(n x k) time complexity
+    # now it is O(n) time complexity
     def maxSubarraySum(self, nums: List[int], k: int) -> int:
         tracking: dict[int, tuple[int, int]] = {i: (-(10**100), 0) for i in range(k)}
         # tuple (maximum, tracking, canMerge)
         tracking[0] = (sum(nums[:k]), sum(nums[:k]) if sum(nums[:k]) >= 0 else 0)
         print(tracking)
+        new_chunk = sum(nums[:k])
 
         for i in range(k, len(nums)):
             index = (i + 1) % k
-            new_chunk = sum(nums[(i + 1 - k) : (i + 1)])
+            new_chunk += (
+                nums[i] - nums[i - k]
+            )  # using this instead of array slicing allows to reduces the time complexity of this operation to constant time
+            print("new chunk:", new_chunk)
             existing_chunk = tracking[index][1]
             merged_chunk = new_chunk + existing_chunk
             print("new:", new_chunk, "existing:", existing_chunk, "i%k:", index)
@@ -29,10 +33,6 @@ class Solution:
             if val > output:
                 output = val
         return output
-
-
-# instead of tracking the subtotal of each cases, which complicated the logic, I just use array slicing to calculate the subtotal
-# failed to encompass the case where the local maximum doesn't correspond to the global maximum
 
 
 if __name__ == "__main__":
