@@ -3,69 +3,23 @@ from typing import List
 
 class Solution:
     def jump(self, nums: List[int]) -> int:
-        memo = {}
+        print(len(nums))
+        # greedy approach
+        start = 1
+        end = nums[0] + 1
+        jump = 0
+        if sum(nums) == 0 or len(nums) == 1:
+            return 0
+        while end < len(nums):
+            for i in range(start, end):
+                if i + nums[i] >= end:
+                    start, end = i + 1, i + nums[i] + 1
+            jump += 1
 
-        def _jump(n: int, counter: int):
-            if n == 0:
-                print("now returning")
-                return counter
-
-            if n not in memo:
-                jumps = []
-                for i in range(n):
-                    distance = n - i
-                    print("i:", i, "distance:", distance, "nums[i]:", nums[i])
-                    if distance <= nums[i]:
-                        print("true")
-                        jumps.append(_jump(i, counter + 1))
-                print("jumps:", jumps)
-                memo[n] = min(jumps)
-            return memo[n]
-
-        return _jump(len(nums) - 1, 0)
+        return jump + 1
 
 
 if __name__ == "__main__":
     sol = Solution()
-    nums = [
-        5,
-        6,
-        4,
-        4,
-        6,
-        9,
-        4,
-        4,
-        7,
-        4,
-        4,
-        8,
-        2,
-        6,
-        8,
-        1,
-        5,
-        9,
-        6,
-        5,
-        2,
-        7,
-        9,
-        7,
-        9,
-        6,
-        9,
-        4,
-        1,
-        6,
-        8,
-        8,
-        4,
-        4,
-        2,
-        0,
-        3,
-        8,
-        5,
-    ]
+    nums = [2, 3, 1, 1, 4]
     print(sol.jump(nums))
