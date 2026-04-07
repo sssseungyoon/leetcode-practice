@@ -1,13 +1,13 @@
 class Solution:
     def secondsToRemoveOccurrences(self, s: str) -> int:
-        count = 0
-        s = s.lstrip("1").rstrip("0")
-        print(s)
-        for i in range(len(s)):
-            if s[i] == "0" or (i < len(s) - 1 and s[i] == s[i + 1] == "1"):
-                print(i)
-                count += 1
-        return count
+        seconds = 0
+        zeros = 0
+        for c in s:
+            if c == "0":
+                zeros += 1
+            elif zeros > 0:
+                seconds = max(seconds + 1, zeros)
+        return seconds
 
 
 if __name__ == "__main__":
